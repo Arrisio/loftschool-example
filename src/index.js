@@ -26,7 +26,7 @@ function isAllTrue(array, fn) {
     }
     let res = true;
 
-    for (let el of array){
+    for (let el of array) {
         res = res && fn(el);
     }
 
@@ -59,7 +59,7 @@ function isSomeTrue(array, fn) {
     }
     let res = false;
 
-    for (let el of array){
+    for (let el of array) {
         res = res || fn(el);
     }
 
@@ -77,7 +77,22 @@ function isSomeTrue(array, fn) {
  3.3: Необходимо выбрасывать исключение в случаях:
    - fn не является функцией (с текстом "fn is not a function")
  */
-function returnBadArguments(fn) {
+function returnBadArguments(fn, ...args) {
+    if (!(fn instanceof Function)) {
+        throw 'fn is not a function';
+    }
+
+    let exceptions = [];
+
+    for (let arg of args) {
+        try {
+            fn(arg);
+        } catch (e) {
+            exceptions.push(arg)
+        }
+    }
+
+    return exceptions;
 }
 
 /*
