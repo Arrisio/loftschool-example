@@ -173,7 +173,7 @@ function collectDOMStat(root) {
         let resultObj = {};
 
         array.forEach((el) => {
-            resultObj[el] = incrementCounter(resultObj.elt)
+            resultObj[el] = incrementCounter(resultObj[el])
         });
 
         return resultObj;
@@ -198,7 +198,7 @@ function collectDOMStat(root) {
         return resObj
     };
 
-    let stat = {tags: {}, classes: {}, texts: 0};
+    let stat = { tags: {}, classes: {}, texts: 0 };
 
     for (let node of root.childNodes) {
         if (node.nodeType === 3) {
@@ -254,6 +254,37 @@ function collectDOMStat(root) {
    }
  */
 function observeChildNodes(where, fn) {
+
+    let fnArg = {
+        nodes: [],
+    };
+
+    let observer = new MutationObserver( (mutationRecords) => {
+
+        mutationRecords.forEach((mutationRecord) => {
+
+            if (mutationRecord.addedNodes.length) {
+                fnArg.type = 'insert';
+                mutationRecord.addedNodes.forEach((node) => {
+                    fnArg.nodes.push(node)
+                });
+            } else if (mutationRecord.removedNodes.length) {
+                fnArg.type = 'remove';
+                mutationRecord.removedNodes.forEach((node) => {
+                    fnArg.nodes.push(node)
+                });
+            }
+
+            fn(fnArg);
+        })
+    });
+
+    observer.observe(where, {
+        childList: true,
+        subtree: true,
+        characterDataOldValue: false,
+        characterData: false
+    });
 }
 
 export {
