@@ -124,7 +124,7 @@ function deleteTextNodes(where) {
    должно быть преобразовано в <span><div><b></b></div><p></p></span>
  */
 function deleteTextNodesRecursive(where) {
-    function gatherTextNodesRecursive(where) {
+    let gatherTextNodesRecursive = (where) => {
         let localTextNodes = [];
 
         for (let node of where.childNodes) {
@@ -141,6 +141,7 @@ function deleteTextNodesRecursive(where) {
     for (let textNode of gatherTextNodesRecursive(where)) {
         textNode.remove();
     }
+
 }
 
 /*
@@ -164,6 +165,60 @@ function deleteTextNodesRecursive(where) {
    }
  */
 function collectDOMStat(root) {
+    var fillNaNum = (x) => x ? x : 0;
+    var fillNaObj = (x) => x ? x : {};
+    var incrementCounter = (x) => x ? ++x: 1;
+
+    var calcArrayStats = (array) => {
+        let resultObj = {};
+
+        array.forEach((el) => {
+            resultObj[el] = incrementCounter(resultObj.elt)
+        });
+
+        return resultObj;
+    }
+
+    var combineObjects = (obj1, obj2) => {
+        let allKeys = [...new Set([...Object.keys(obj1), ...Object.keys(obj2)])];
+        let resObj = {}
+
+        allKeys.forEach((key) => {
+            if (typeof (obj1[key]) != typeof (obj1[key]) && obj1[key] !== undefined && obj2[key] !== undefined) {
+                throw new Error('Несовпадение типов комбинируемых элементов')
+            } else if (Number.isInteger(obj1[key]) || Number.isInteger(obj2[key])) {
+                resObj[key] = fillNaNum(obj1[key]) + fillNaNum(obj2[key])
+            } else if (obj1[key] instanceof Object || obj2[key] instanceof Object) {
+                resObj[key] = combineObjects(fillNaObj(obj1[key]), fillNaObj(obj2[key]))
+            } else {
+                throw new Error('тип данных не поддерживается при суммировании объектов')
+            }
+        })
+
+        return resObj
+    };
+
+    let stat = {tags: {}, classes: {}, texts: 0};
+
+    for (let node of root.childNodes) {
+        if (node.nodeType === 3) {
+            stat.texts += 1;
+        }
+
+        if (node.classList != null && typeof node.classList[Symbol.iterator] === 'function') {
+            stat.classes = combineObjects(stat.classes, calcArrayStats(node.classList))
+        }
+
+        if (node.tagName) {
+            stat.tags[node.tagName] = incrementCounter(stat.tags[node.tagName]);
+        }
+
+        if (node.hasChildNodes()) {
+            stat = combineObjects(stat, collectDOMStat(node));
+        }
+    }
+
+    return stat;
 }
 
 /*
