@@ -265,6 +265,8 @@ function observeChildNodes(where, fn) {
                 mutationRecord.removedNodes.forEach((node) => {
                     fnArg.nodes.push(node)
                 });
+            } else {
+                return;
             }
 
             fn(fnArg);
