@@ -81,38 +81,41 @@ function addListeners(target) {
     e.dataTransfer.setData('divId', e.target.id);
     e.dataTransfer.setData('clientX', e.clientX);
     e.dataTransfer.setData('clientY', e.clientY);
+    e.dataTransferItem
   };
-  let handlerDragOver = e => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-  let handlerDragEnter = e => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
+
   let handlerDragEnd = e => {
     e.preventDefault();
     e.target.style.opacity = 1;
     e.target.style.zIndex = getTopZIndex();
   };
-  let handlerDrop = e => {
-    e.preventDefault();
-    let srcElem = document.getElementById(e.dataTransfer.getData('divId'));
-    srcElem.style.left = e.clientX - e.dataTransfer.getData('clientX') + srcElem.getBoundingClientRect().x + 'px';
-    srcElem.style.top = e.clientY - e.dataTransfer.getData('clientY') + srcElem.getBoundingClientRect().y + 'px';
-    e.dataTransfer.clearData();
-  };
 
   target.addEventListener('dragstart', handlerDragStart, false);
   target.addEventListener('dragend', handlerDragEnd, false);
-
-  target.parentNode.addEventListener('dragenter', handlerDragEnter, false);
-  target.parentNode.addEventListener('dragover', handlerDragOver, false);
-  target.parentNode.addEventListener('drop', handlerDrop, false);
-  target.parentNode.style.height = '100vh';
 }
-
 let addDivButton = homeworkContainer.querySelector('#addDiv');
+
+(() => {
+  homeworkContainer.style.width = 100 + 'vh';
+  homeworkContainer.style.height = 100 + 'vh';
+  homeworkContainer.addEventListener('dragenter', e => {
+    e.preventDefault();
+    e.target.style.opacity = 1;
+    e.target.style.zIndex = getTopZIndex();
+  }, false);
+  homeworkContainer.addEventListener('dragover', e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, false);
+  homeworkContainer.addEventListener('drop', e => {
+    e.preventDefault();
+    let div = document.getElementById(e.dataTransfer.getData('divId'));
+    div.style.left = e.clientX - e.dataTransfer.getData('clientX') + div.getBoundingClientRect().x + 'px';
+    div.style.top = e.clientY - e.dataTransfer.getData('clientY') + div.getBoundingClientRect().y + 'px';
+    e.dataTransfer.clearData();
+  }, false);
+})();
+
 
 addDivButton.addEventListener('click', function () {
   // создать новый div
@@ -125,6 +128,7 @@ addDivButton.addEventListener('click', function () {
   // можно не назначать обработчики событий каждому div в отдельности, а использовать делегирование
   // или использовать HTML5 D&D - https://www.html5rocks.com/ru/tutorials/dnd/basics/
 });
+
 
 function getTopZIndex() {
   let highestZIdx = -99999;
