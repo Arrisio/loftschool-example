@@ -27,21 +27,34 @@ const homeworkContainer = document.querySelector('#homework-container');
    homeworkContainer.appendChild(newDiv);
  */
 function createDiv() {
+
+    function getRandomColor() {
+        let letters = '0123456789ABCDEF';
+        let color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function setRandomSize(element, maxHeight = 240, maxWidth = 240,) {
+        element.style.height = Math.floor(Math.random() * maxHeight) + 'px';
+        element.style.width = Math.floor(Math.random() * maxWidth) + 'px';
+    }
+
+    function setRandomPosition(element) {
+        element.style.left = Math.floor(Math.random() * (homeworkContainer.clientWidth - element.clientWidth)) + 'px';
+        element.style.top = Math.floor(Math.random() * (homeworkContainer.clientHeight - element.clientHeight)) + 'px';
+        element.style.position = 'absolute';
+    }
+
     const div = document.createElement('div');
 
     div.classList.add('draggable-div');
     div.setAttribute('draggable', 'true');
-    let divId = 'div' + Math.floor(Math.random() * 100);
-
-    div.setAttribute('id', divId);
-    div.style.border = '2px solid black';
-    div.style.backgroundColor =
-        '#' + Math.floor(Math.random() * 16777215).toString(16);
-    div.style.height = Math.floor(Math.random() * 300) + 'px';
-    div.style.width = Math.floor(Math.random() * 300) + 'px';
-    div.style.top = Math.floor(Math.random() * 100) + 'px';
-    div.style.left = Math.floor(Math.random() * 500) + 'px';
-    div.style.position = 'relative';
+    div.style.backgroundColor = getRandomColor();
+    setRandomSize(div)
+    setRandomPosition(div);
 
     return div;
 }
@@ -55,50 +68,20 @@ function createDiv() {
    addListeners(newDiv);
  */
 
-let dragSrcEl = null;
-let dragSrcElStyle = {};
-
 function addListeners(target) {
     let handlerDragStart = e => {
         e.target.style.opacity = '0.4';
-        dragSrcEl = e.target;
-        dragSrcElStyle = { ...dragSrcEl.style };
-        e.dataTransfer.effectAllowed = 'move';
-        // e.dataTransfer.setData('text', e.target.innerHTML);
-    };
-    let handlerDragOver = e => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-    };
-    let handlerDragEnter = e => {
-        e.target.style.border = '2px dashed black';
-    };
-    let handlerDragLeave = e => {
-        e.target.style.border = '2px solid black';
+        console.log('dragstart Реализовано согласно ТЗ ');
     };
     let handlerDragEnd = e => {
+        // e.preventDefault();
         e.target.style.opacity = 1;
-    };
-    let handlerDrop = e => {
-        e.stopPropagation();
-        e.target.style.border = '2px solid black';
-        if (dragSrcEl != e.target) {
-            dragSrcEl.style.width = e.target.style.width;
-            dragSrcEl.style.height = e.target.style.height;
-            dragSrcEl.style.backgroundColor = e.target.style.backgroundColor;
-            e.target.style.width = dragSrcElStyle.width;
-            e.target.style.height = dragSrcElStyle.height;
-            e.target.style.backgroundColor = dragSrcElStyle.backgroundColor;
-            // e.target.innerHTML = e.dataTransfer.getData('text/html');
-        }
+        console.log('dragend Реализовано согласно ТЗ ');
     };
 
     target.addEventListener('dragstart', handlerDragStart, false);
-    target.addEventListener('dragenter', handlerDragEnter, false);
-    target.addEventListener('dragover', handlerDragOver, false);
-    target.addEventListener('dragleave', handlerDragLeave, false);
     target.addEventListener('dragend', handlerDragEnd, false);
-    target.addEventListener('drop', handlerDrop, false);
+    // target.addEventListener('drop', handlerDrop, false);
 }
 
 let addDivButton = homeworkContainer.querySelector('#addDiv');
