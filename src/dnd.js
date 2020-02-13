@@ -75,32 +75,28 @@ function createDiv() {
  */
 
 function addListeners(target) {
-  let handlerDragStart = e => {
+  target.addEventListener('dragstart', e => {
     e.target.style.opacity = '0.4';
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('divId', e.target.id);
     e.dataTransfer.setData('clientX', e.clientX);
     e.dataTransfer.setData('clientY', e.clientY);
-    e.dataTransferItem
-  };
-
-  let handlerDragEnd = e => {
+  }, false);
+  target.addEventListener('dragend', e => {
     e.preventDefault();
-    e.target.style.opacity = 1;
+    e.target.style.opacity = '1';
     e.target.style.zIndex = getTopZIndex();
-  };
-
-  target.addEventListener('dragstart', handlerDragStart, false);
-  target.addEventListener('dragend', handlerDragEnd, false);
+  }, false);
 }
+
 let addDivButton = homeworkContainer.querySelector('#addDiv');
 
 (() => {
-  homeworkContainer.style.width = 100 + 'vh';
-  homeworkContainer.style.height = 100 + 'vh';
+  homeworkContainer.style.width = '100vh';
+  homeworkContainer.style.height = '100vh';
   homeworkContainer.addEventListener('dragenter', e => {
     e.preventDefault();
-    e.target.style.opacity = 1;
+    // e.target.style.opacity = 1;
     e.target.style.zIndex = getTopZIndex();
   }, false);
   homeworkContainer.addEventListener('dragover', e => {
