@@ -92,11 +92,9 @@ function addListeners(target) {
 let addDivButton = homeworkContainer.querySelector('#addDiv');
 
 (() => {
-  homeworkContainer.style.width = '100vh';
   homeworkContainer.style.height = '100vh';
   homeworkContainer.addEventListener('dragenter', e => {
     e.preventDefault();
-    // e.target.style.opacity = 1;
     e.target.style.zIndex = getTopZIndex();
   }, false);
   homeworkContainer.addEventListener('dragover', e => {
