@@ -56,7 +56,7 @@ function createDiv() {
   div.classList.add('draggable-div');
   div.setAttribute('draggable', 'true');
   div.style.backgroundColor = getRandomColor();
-  setRandomSize(div)
+  setRandomSize(div);
   setRandomPosition(div);
 
   div.setAttribute('id', uuidv1());
