@@ -39,12 +39,15 @@ const homeworkContainer = document.querySelector('#homework-container');
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
 function loadTowns() {
+    // console.log('as');
 
-    loadingBlock.style.display = 'none';
-    filterBlock.style.display = 'block';
+    return loadAndSortTowns()
+        .then(towns => {
+            loadingBlock.style.display = 'none';
+            filterBlock.style.display = 'block';
 
-    return loadAndSortTowns();
-
+            return towns;
+        })
 }
 
 /*
@@ -92,13 +95,18 @@ const loadedTownList = [];
 loadTowns()
     .then(json => json.map(obj => obj.name))
     .then(
-
         towns => {
             towns.forEach(town => {
                 loadedTownList.push(town)
             });
         }
-    );
+
+    )
+    .catch(e => {
+        alert(`Не могу загрузить или обработать список городов. Ошибка: ${e}`)
+    });
+
+// console.log(loadedTownList);
 
 export {
     loadTowns,
