@@ -33,6 +33,13 @@ function loadAndSortTowns() {
     let url = 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json';
 
     return fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject('Не удалось загрузить города');
+            }
+
+            return response.json();
+        })
         .then(response => response.json())
         .then(json => json.sort((a, b) => (a.name > b.name ? 1 : -1)));
 }
