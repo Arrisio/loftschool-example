@@ -97,22 +97,22 @@ filterInput.addEventListener('keyup', function (e) {
 
 })();
 
-async function showFilterBlock() {
+function showFilterBlock() {
     loadingBlock.style.display = 'none';
     filterBlock.style.display = 'block';
 }
 
-async function hideFilterBlock() {
+function hideFilterBlock() {
     filterBlock.style.display = 'none';
 }
 
-async function showErrorBlock(e) {
+function showErrorBlock(e) {
     btnRefresh.style.display = 'block';
     divError.style.display = 'block';
     divError.innerText = e;
 }
 
-async function hideErrorBlock() {
+function hideErrorBlock() {
     btnRefresh.style.display = 'none';
     divError.style.display = 'none';
 }
@@ -122,19 +122,17 @@ async function processLoadingTowns() {
         loadingBlock.style.display = 'block';
         let towns = await loadTowns();
         console.log(towns);
-        await showFilterBlock();
+        showFilterBlock();
         towns.map(obj => obj.name).forEach(townName =>{
             loadedTownList.push(townName);
         });
 
-        await hideErrorBlock();
-        await showFilterBlock();
+        hideErrorBlock();
+        showFilterBlock();
     }
     catch (e) {
-        console.error('CATCH');
-        console.error(e);
-        await showErrorBlock(e);
-        await hideFilterBlock()
+        showErrorBlock(e);
+        hideFilterBlock()
     }
 
 
