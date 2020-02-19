@@ -28,7 +28,8 @@
    const newDiv = document.createElement('div');
    homeworkContainer.appendChild(newDiv);
  */
-import { loadAndSortTowns } from '../src/index';
+import { loadAndSortTowns as loadTowns} from '../src/index';
+import classPrivateFieldGet from '@babel/runtime/helpers/esm/classPrivateFieldGet';
 
 const homeworkContainer = document.querySelector('#homework-container');
 
@@ -38,17 +39,9 @@ const homeworkContainer = document.querySelector('#homework-container');
  Массив городов пожно получить отправив асинхронный запрос по адресу
  https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json
  */
-function loadTowns() {
-    // console.log('as');
 
-    return loadAndSortTowns()
-        .then(towns => {
-            loadingBlock.style.display = 'none';
-            filterBlock.style.display = 'block';
-
-            return towns;
-        })
-}
+const divError = document.createElement('div'),
+    btnRefresh = document.createElement('button');
 
 /*
  Функция должна проверять встречается ли подстрока chunk в строке full
@@ -90,23 +83,65 @@ filterInput.addEventListener('keyup', function (e) {
     filterResult.appendChild(fragment);
 });
 
-const loadedTownList = [];
 
-loadTowns()
-    .then(json => json.map(obj => obj.name))
-    .then(
-        towns => {
-            towns.forEach(town => {
-                loadedTownList.push(town)
-            });
-        }
 
-    )
-    .catch(e => {
-        alert(`Не могу загрузить или обработать список городов. Ошибка: ${e}`)
+(() => {
+    btnRefresh.innerText = 'Resresh';
+
+    divError.id = 'error-block';
+    btnRefresh.addEventListener('click', () => {
+        processLoadingTowns();
     });
+    homeworkContainer.appendChild(btnRefresh);
+    homeworkContainer.appendChild(divError);
 
-// console.log(loadedTownList);
+})();
+
+async function showFilterBlock() {
+    loadingBlock.style.display = 'none';
+    filterBlock.style.display = 'block';
+}
+
+async function hideFilterBlock() {
+    filterBlock.style.display = 'none';
+}
+
+async function showErrorBlock(e) {
+    btnRefresh.style.display = 'block';
+    divError.style.display = 'block';
+    divError.innerText = e;
+}
+
+async function hideErrorBlock() {
+    btnRefresh.style.display = 'none';
+    divError.style.display = 'none';
+}
+
+async function processLoadingTowns() {
+    try {
+        loadingBlock.style.display = 'block';
+        let towns = await loadTowns();
+        console.log(towns);
+        await showFilterBlock();
+        towns.map(obj => obj.name).forEach(townName =>{
+            loadedTownList.push(townName);
+        });
+
+        await hideErrorBlock();
+        await showFilterBlock();
+    }
+    catch (e) {
+        console.error('CATCH');
+        console.error(e);
+        await showErrorBlock(e);
+        await hideFilterBlock()
+    }
+
+
+}
+
+const loadedTownList = [];
+processLoadingTowns();
 
 export {
     loadTowns,

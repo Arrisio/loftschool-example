@@ -40,7 +40,6 @@ function loadAndSortTowns() {
 
             return response.json();
         })
-        .then(response => response.json())
         .then(json => json.sort((a, b) => (a.name > b.name ? 1 : -1)));
 }
 
