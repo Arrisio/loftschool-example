@@ -58,6 +58,11 @@ describe('ДЗ 7.2 - Cookie editor', () => {
 
         it('cookie должны добавляться при нажатии на "добавить"', () => {
             let cookies;
+            filterNameInput = homeworkContainer.querySelector('#filter-name-input');
+            addNameInput = homeworkContainer.querySelector('#add-name-input');
+            addValueInput = homeworkContainer.querySelector('#add-value-input');
+            addButton = homeworkContainer.querySelector('#add-button');
+            listTable = homeworkContainer.querySelector('#list-table tbody');
 
             addNameInput.value = 'test-cookie-name-1';
             addValueInput.value = 'test-cookie-value-1';

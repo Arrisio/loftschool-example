@@ -31,6 +31,8 @@
    const newDiv = document.createElement('div');
    homeworkContainer.appendChild(newDiv);
  */
+// import initializerWarningHelper from '@babel/runtime/helpers/esm/initializerWarningHelper';
+
 const homeworkContainer = document.querySelector('#homework-container');
 // текстовое поле для фильтрации cookie
 const filterNameInput = homeworkContainer.querySelector('#filter-name-input');
@@ -43,10 +45,91 @@ const addButton = homeworkContainer.querySelector('#add-button');
 // таблица со списком cookie
 const listTable = homeworkContainer.querySelector('#list-table tbody');
 
-filterNameInput.addEventListener('keyup', function() {
+filterNameInput.addEventListener('keyup', function () {
     // здесь можно обработать нажатия на клавиши внутри текстового поля для фильтрации cookie
+    fillTable();
 });
 
 addButton.addEventListener('click', () => {
     // здесь можно обработать нажатие на кнопку "добавить cookie"
+    let cookieName = addNameInput.value,
+        cookieValue = addValueInput.value;
+
+    if (!cookieName) {
+        alert('Некорректное имя добавляемой cookie');
+
+        return;
+    }
+
+    document.cookie = `${cookieName}=${cookieValue}`;
+    fillTable();
+    // cookieName.value = '';
+    // addValueInput.value = '';
+}
+)
+;
+
+const filterFn = (filterPattern, filteredVal) => filteredVal.toLowerCase().includes(filterPattern.toLowerCase()) ;
+
+const getFilteredCookies = () => {
+    const cookies = getCookies();
+    const filterVal = filterNameInput.value;
+
+    return Object.keys(cookies).reduce((obj, key ) => {
+        if (filterFn(filterVal, key) || filterFn(filterVal, cookies[key]) ) {
+            obj[key] = cookies[key];
+        }
+
+        return obj;
+    }, {});
+};
+
+let removeCookie = e => {
+    document.cookie = `${e.target.dataset.cookie}=; max-age=-1`;
+    fillTable();
+};
+
+const fillTable = () => {
+    const fragment = document.createDocumentFragment();
+    const cookies = getFilteredCookies();
+
+    listTable.innerHTML ='';
+
+    // eslint-disable-next-line guard-for-in
+    for (let cookie in cookies) {
+        const tr = document.createElement('tr');
+        const tdName = document.createElement('td');
+        const tdValue = document.createElement('td');
+        const tdDel = document.createElement('button');
+
+        tdName.innerText = cookie;
+        tdValue.innerText = cookies[cookie];
+        tdDel.innerText = 'Удалить';
+        tdDel.dataset.cookie = cookie;
+        tdDel.addEventListener('click', removeCookie);
+
+        tr.appendChild(tdName);
+        tr.appendChild(tdValue);
+        tr.appendChild(tdDel);
+
+        fragment.appendChild(tr);
+    }
+
+    listTable.appendChild(fragment);
+};
+
+window.addEventListener('load', () => {
+    fillTable();
 });
+
+function getCookies() {
+    return document.cookie
+        .split('; ')
+        .filter(Boolean)
+        .map(cookie => cookie.match(/^([^=]+)=(.+)/))
+        .reduce((obj, [, name, value]) => {
+            obj[name] = value;
+
+            return obj;
+        }, {});
+}
